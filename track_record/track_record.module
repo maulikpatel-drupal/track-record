@@ -1,0 +1,28 @@
+<?php
+
+use Drupal\taxonomy\Entity\Term;
+/**
+ * Implements hook_entity_presave().
+ */
+function track_record_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    // Here you modify only your content type
+    case 'program':
+      $term = Term::load($entity->get('field_tags')->target_id);
+      //echo 'hello'.$term->getName();
+      // fetch the last record to table.
+      $query = db_select('track_record','f')->fields('f',['field_value'])
+               ->orderBy("field_value", 'ASC')->range(0,1)
+               ->execute()->fetchObject();
+      // condition to before insert to table         
+      if($query->field_value != $term->getName()) {        
+      db_insert('track_record')
+      ->fields([
+        'nid' => $entity->id(),
+        'field_value' => $term->getName(),
+        'updated_date' => REQUEST_TIME,
+      ])->execute();
+      }
+     break;
+  }
+}

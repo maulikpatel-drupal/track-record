@@ -1,0 +1,6 @@
+name : Tracking field value
+type: module
+description : 'Drupal 8 module for tracking field value'
+version: 8.x
+package: Custom
+core: 8.x
